@@ -1,31 +1,23 @@
 const Task = require("../models/Task");
 
 // Get Today's Tasks
+// Get Today's + Overdue Tasks
 const getTodayTasks = async (req, res) => {
   try {
     const today = new Date();
 
-    const startOfDay = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate()
-    );
-
-    const endOfDay = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate() + 1
-    );
+    today.setHours(23, 59, 59, 999);
 
     const tasks = await Task.find({
       user: req.user._id,
+      completed: false,
       date: {
-        $gte: startOfDay,
-        $lt: endOfDay,
+        $lte: today,
       },
     })
       .populate("subject")
-      .populate("unit");
+      .populate("unit")
+      .sort({ date: 1 });
 
     res.status(200).json(tasks);
   } catch (error) {

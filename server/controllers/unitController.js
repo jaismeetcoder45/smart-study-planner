@@ -1,4 +1,5 @@
 const Unit = require("../models/Unit");
+const Task = require("../models/Task");
 
 // Create Unit
 const createUnit = async (req, res) => {
@@ -70,7 +71,13 @@ const deleteUnit = async (req, res) => {
       });
     }
 
-    await unit.deleteOne();
+    // Delete related planner tasks
+await Task.deleteMany({
+  unit: req.params.id,
+});
+
+// Delete unit
+await unit.deleteOne();
 
     res.status(200).json({
       message: "Unit deleted successfully",
