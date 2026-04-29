@@ -6,6 +6,23 @@ const jwt = require("jsonwebtoken");
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    if (
+  !name ||
+  !email ||
+  !password
+) {
+  return res.status(400).json({
+    message:
+      "Please fill all fields",
+  });
+}
+
+if (password.length < 6) {
+  return res.status(400).json({
+    message:
+      "Password must be at least 6 characters",
+  });
+}
 
     // Check existing user
     const existingUser = await User.findOne({ email });

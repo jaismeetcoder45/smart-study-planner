@@ -4,6 +4,7 @@ import {
   Link,
   useNavigate,
 } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Register() {
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ function Register() {
     email: "",
     password: "",
   });
+  const [loading, setLoading] =
+  useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -22,6 +25,26 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    if (
+  !formData.name ||
+  !formData.email ||
+  !formData.password
+) {
+  toast.error(
+    "Please fill all fields"
+  );
+
+  return;
+}
+
+if (formData.password.length < 6) {
+  toast.error(
+    "Password must be at least 6 characters"
+  );
+
+  return;
+}
 
     try {
       const response = await API.post(
@@ -31,12 +54,14 @@ function Register() {
 
       console.log(response.data);
 
-      alert("Registration Successful!");
+      toast.success("Registration Successful!");
+      setLoading(false);
       navigate("/");
     } catch (error) {
       console.error(error);
 
-      alert("Registration Failed");
+      toast.error("Registration failed!");
+      setLoading(false);
     }
   };
 
@@ -79,11 +104,14 @@ function Register() {
           />
 
           <button
-            type="submit"
-            className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700"
-          >
-            Register
-          </button>
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 disabled:bg-blue-400"
+        >
+          {loading
+            ? "Registering..."
+            : "Register"}
+        </button>
         </form>
         <p className="mt-6 text-center text-gray-600 dark:text-gray-300">
           Already have an account?{" "}

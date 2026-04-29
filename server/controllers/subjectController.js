@@ -6,6 +6,12 @@ const Subject = require("../models/Subject");
 const createSubject = async (req, res) => {
   try {
     const { name } = req.body;
+    if (!name || !name.trim()) {
+  return res.status(400).json({
+    message:
+      "Subject name is required",
+  });
+}
 
     const subject = await Subject.create({
       user: req.user._id,

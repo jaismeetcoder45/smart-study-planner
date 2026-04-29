@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Login() {
   const navigate = useNavigate();
@@ -10,6 +11,9 @@ function Login() {
     email: "",
     password: "",
   });
+
+  const [loading, setLoading] =
+  useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -20,6 +24,17 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    if (
+  !formData.email ||
+  !formData.password
+) {
+  toast.error(
+    "Please fill all fields"
+  );
+
+  return;
+}
 
     try {
       const response = await API.post(
@@ -39,14 +54,16 @@ function Login() {
         JSON.stringify(response.data.user)
       );
 
-      alert("Login Successful!");
+      toast.success("Login Successful!");
 
       // Redirect
+      setLoading(false);
       navigate("/dashboard");
     } catch (error) {
       console.error(error);
 
-      alert("Invalid Credentials");
+      toast.error("Login Failed!");
+      setLoading(false);
     }
   };
 
@@ -79,12 +96,13 @@ function Login() {
             className="w-full p-3 border rounded-lg"
           />
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700"
-          >
-            Login
-          </button>
+         <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 disabled:bg-blue-400"
+        >
+          {loading ? "Logging in..." : "Login"}
+        </button>
         </form>
                 <p className="mt-6 text-center text-gray-600 dark:text-gray-300">
           Don't have an account?{" "}

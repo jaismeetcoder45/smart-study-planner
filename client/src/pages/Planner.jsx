@@ -5,6 +5,7 @@ import API from "../services/api";
 import DashboardLayout from "../layouts/DashboardLayout";
 
 import PlannerCalendar from "../components/PlannerCalendar";
+import { toast } from "react-toastify";
 
 function Planner() {
   const [examDate, setExamDate] =
@@ -39,6 +40,13 @@ function Planner() {
   // Generate Study Plan
   const generatePlan = async (e) => {
     e.preventDefault();
+    if (!examDate) {
+  toast.error(
+    "Please select exam date"
+  );
+
+  return;
+}
     setLoading(true);
 
     try {
@@ -49,15 +57,15 @@ function Planner() {
         }
       );
 
-      fetchPlannerTasks();
+      await fetchPlannerTasks();
 
-setLoading(false);
+      setLoading(false);
 
-alert("Study Plan Generated!");
+toast.success("Study Plan Generated!");
     } catch (error) {
       console.error(error);
       setLoading(false);
-      alert("Failed to generate plan");
+      toast.error("Failed to generate plan");
     }
   };
 
@@ -68,7 +76,7 @@ alert("Study Plan Generated!");
 
       setSchedule([]);
 
-      alert("Planner Deleted");
+      toast.success("Planner deleted");
     } catch (error) {
       console.error(error);
     }
@@ -143,13 +151,14 @@ alert("Study Plan Generated!");
 
   <div className="flex gap-4">
     <button
-      type="submit"
-      className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
-    >
-      {loading
-        ? "Generating..."
-        : "Generate Plan"}
-    </button>
+  type="submit"
+  disabled={loading}
+  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:bg-blue-400"
+>
+  {loading
+    ? "Generating..."
+    : "Generate Plan"}
+</button>
 
     <button
       type="button"

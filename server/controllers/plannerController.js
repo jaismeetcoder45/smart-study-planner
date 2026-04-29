@@ -51,6 +51,12 @@ const generateStudyPlan = async (req, res) => {
 
     let currentDay = 0;
 
+    // Remove old incomplete planner tasks
+      await Task.deleteMany({
+        user: req.user._id,
+        completed: false,
+      });
+
     for (let i = 0; i < units.length; i++) {
       const studyDate = new Date();
 
@@ -63,15 +69,16 @@ const generateStudyPlan = async (req, res) => {
         subject: units[i].subject.name,
         unit: units[i].name,
       });
+  
 
-      await Task.create({
-  user: req.user._id,
-  subject: units[i].subject._id,
-  unit: units[i]._id,
-  title: `${units[i].subject.name} - ${units[i].name}`,
-  date: studyDate,
-  type: "generated",
-});
+            await Task.create({
+        user: req.user._id,
+        subject: units[i].subject._id,
+        unit: units[i]._id,
+        title: `${units[i].subject.name} - ${units[i].name}`,
+        date: studyDate,
+        type: "generated",
+      });
 
       currentDay++;
 

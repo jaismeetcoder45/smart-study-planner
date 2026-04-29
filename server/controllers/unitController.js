@@ -5,6 +5,12 @@ const Task = require("../models/Task");
 const createUnit = async (req, res) => {
   try {
     const { subjectId, name } = req.body;
+    if (!name || !name.trim()) {
+  return res.status(400).json({
+    message:
+      "Unit name is required",
+  });
+}
 
     const unit = await Unit.create({
       subject: subjectId,
