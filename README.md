@@ -142,4 +142,4 @@ with a responsive sidebar and adaptive layout.
 ## Clone Repository
 
 ```bash
-git clone YOUR_GITHUB_LINK
+git clone https://github.com/jaismeetcoder45/smart-study-planner.git
